@@ -5,11 +5,13 @@ import './style.css'
 type Item = {
   id: string
   title: string
+  position: number
+  project:string
 }
 const initialItems: Item[] = [
-  { id: '1', title: 'a' },
-  { id: '3', title: 'b' },
-  { id: '2', title: 'c' },
+  { id: '1', title: 'a' ,position:1,project:'1'},
+  { id: '3', title: 'b' ,position:2,project:'1'},
+  { id: '2', title: 'c' ,position:3,project:'1'},
 ]
 
 let id = 4
@@ -43,12 +45,12 @@ function Test() {
     }
   }, [])
   return (
-    <div className="container" ref={containerRef}>
+    <div className="container " ref={containerRef}>
       <div className="items bg-fuchsia-200">
         {slottedItems.sort((a,b)=>a.slotId.localeCompare(b.slotId)).map(({ slotId, itemId, item }) => (
           <div className="slot" key={slotId} data-swapy-slot={slotId}>
             {item &&
-              <div className="item cursor-grab active:cursor-grabbing" data-swapy-item={itemId} key={itemId}>
+              <div className="item cursor-grab active:cursor-grabbing select-none" data-swapy-item={itemId} key={itemId}>
                 <span>{item.title}+{slotId}+{itemId}+{item.id}</span>
                 <span className="delete" data-swapy-no-drag onClick={() => {
                   setItems(items.filter(i => i.id !== item.id))
@@ -60,7 +62,7 @@ function Test() {
         ))}
       </div>
       <div className="item item--add" onClick={() => {
-        const newItem: Item = { id: `${id}`, title: `${id}` }
+        const newItem: Item = { id: `${id}`, title: `${id}` ,position:id,project:'1'}
         setItems([...items, newItem])
         id++
       }}>+</div>
