@@ -1,2 +1,12 @@
 @import "tailwindcss";
 
+*{
+    scrollbar-width: thin;
+    scroll-behavior: smooth;
+    scrollbar-color: #8d8d8da6 transparent;
+}
+::-webkit-scrollbar-button{
+    display: none;
+    height: 0;
+    width: 0;
+}

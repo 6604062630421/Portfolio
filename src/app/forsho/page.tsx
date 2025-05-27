@@ -3,9 +3,13 @@ import React, { useEffect, useState } from "react";
 import AuthService from "../service/Authservice";
 import Loginform from "./loginform";
 import { useRef } from "react";
-import Test from "./somefunc";
+import SwapperBoard from "./swapboard";
 import ImageUploader from "./crop";
+import CoverEdit from "./CoverEdit";
 const Page = () => {
+  const [show, setShow] = useState<boolean>(false);
+
+//supabase
   const supabase = AuthService.getInstance();
   const [user, setUser] = useState<unknown>();
   const windowRef = useRef(null);
@@ -56,20 +60,20 @@ const Page = () => {
     };
     getSession();
   }, []);
-
+  //supabase
 
   if (true) {
     return (
-      <div ref={windowRef} className="h-[100vh]">
+      <div ref={windowRef} className="h-[100vh] overflow-x-hidden">
+        {show && <CoverEdit onClose={()=>setShow(false)} isOpen={show}/>}
         hello{`${user}`}
         <button className="bg-blue-500 text-white px-4 py-2" onClick={onLogOut}>
           Logut
         </button>
-      <div className="max-w-[100vw] w-[80vw] bg-amber-200 relative">
-        <Test/>
-        <ImageUploader/>
-        
-      </div>
+        <div className="max-w-[100vw] w-[100vw] px-10 bg-amber-200 relative">
+          <SwapperBoard />
+          
+        </div>
       </div>
     );
   }

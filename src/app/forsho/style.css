@@ -1,38 +1,17 @@
-.container {
-    max-width: 800px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin: 0 auto;
-  }
-  
-  .slot {
+    .slot {
     border-radius: 10px;
-    height: 100px;
   }
   
   .slot[data-swapy-highlighted] {
     background: rgba(255, 255, 255, 0.2);
   }
   
-  .items {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-  }
-  
   .item {
     position: relative;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
     background: #ccc8fd;
-    padding: 20px 0;
-    border-radius: 10px;
     width: 100%;
-    height: 100%;
   }
   
   /* .item-2 {
@@ -43,16 +22,6 @@
     position: relative;
   }
   
-  .handle {
-    cursor: grab;
-    width: 24px;
-    height: 24px;
-    background-image: url(./handle.svg);
-    opacity: 0.5;
-    position: absolute;
-    top: 14px;
-    left: 10px;
-  }
   
   .item.item--add {
     background: transparent;
@@ -85,7 +54,12 @@
     background-color: #928be2;
     
   }
+
+  .custom {
+    background-color: #4338ca;
+  }
   
   /* .item[data-swapy-dragging] {
     opacity: 0.8;
   } */
+  

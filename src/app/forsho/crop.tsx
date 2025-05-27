@@ -1,17 +1,12 @@
 // components/ImageUploader.tsx
 import React, { useState, useCallback, useRef } from "react";
-import {CropperRef,Cropper} from 'react-advanced-cropper';
-import 'react-advanced-cropper/dist/style.css'
-import { getCroppedImg } from "./utils/cropImage";
+import { CropperRef, Cropper, StencilOverlay } from "react-advanced-cropper";
+import "react-advanced-cropper/dist/style.css";
+import './style.css'
 const ImageUploader: React.FC = () => {
   const [image, setImage] = useState<string | null>(null);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
-  const cropperRef =useRef<CropperRef|null>(null);
-
-  const onCropComplete = useCallback((_: any, croppedAreaPixels: any) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-  }, []);
+  const cropperRef = useRef<CropperRef | null>(null);
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -25,22 +20,41 @@ const ImageUploader: React.FC = () => {
   const cropImage = async () => {
     if (!image) return;
     const cropped = cropperRef.current?.getCanvas();
-    if(cropped){
-      const base64 = cropped.toDataURL("image/png");
-      setCroppedImage(base64);
+    if (cropped) {
+      cropped.toBlob((blob) => {
+        if (blob) {
+          const url = URL.createObjectURL(blob);
+          setCroppedImage(url);
+        }
+        else{
+          console.log('blob null')
+        }
+      }, "image/png");
     }
   };
-  const onCropChange = (cropper:CropperRef) =>{
+  const onCropChange = (cropper: CropperRef) => {
     cropperRef.current = cropper;
-    console.log(cropper.getCoordinates(),cropper.getCanvas())
-  }
+    console.log(cropper.getCoordinates(), cropper.getCanvas());
+  };
   return (
     <div className="space-y-4">
       <input type="file" accept="image/*" onChange={onFileChange} />
 
       {image && (
-        <div className="relative h-fit bg-gray-200 rounded overflow-hidden">
-          <Cropper src={image} onChange={onCropChange} className="h-[600px]" style={{background:'transparent',objectFit:'contain'}}/>
+        <div className="relative h-fit  rounded overflow-hidden">
+          <Cropper
+            src={image}
+            onChange={onCropChange}
+            className="h-[600px] "
+            style={{ background: "transparent", objectFit: "contain"}}
+
+            stencilProps={{
+              grid:true,
+              gay:true,
+              
+            }}
+            
+          />
         </div>
       )}
 
