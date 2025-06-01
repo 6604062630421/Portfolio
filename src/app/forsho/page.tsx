@@ -4,13 +4,20 @@ import AuthService from "../service/Authservice";
 import Loginform from "./loginform";
 import { useRef } from "react";
 import SwapperBoard from "./swapboard";
-import ImageUploader from "./crop";
-import CoverEdit from "./CoverEdit";
-const Page = () => {
-  const [show, setShow] = useState<boolean>(false);
+import { fetchingCover, fetchingProject, fetchingTag } from "./fetchingCover";
+import type { Cover, typeProject, typeTag } from "../type";
+import SupabaseService from "../service/supabase";
+import Mymasonrygrid from "./masonry";
+let itemLength: number;
+let id: number;
 
-//supabase
+const Page = () => {
+  const [showProject, setShowProject] = useState<boolean>(false);
+  const [showSwapy, setShowSwapy] = useState<boolean>(false);
+  const [onload, setOnload] = useState<boolean>(true);
+  //loaddatasupabase
   const supabase = AuthService.getInstance();
+  const SupabaseServ = SupabaseService.getClient();
   const [user, setUser] = useState<unknown>();
   const windowRef = useRef(null);
   const authListen = () => {
@@ -60,19 +67,192 @@ const Page = () => {
     };
     getSession();
   }, []);
-  //supabase
+  //loaddatasupabase
 
-  if (true) {
+  //editdatasupabase
+  const [idThatUpdate, setIdThatUpdate] = useState<Set<string>>(new Set());
+  const handleUpdate = async () => {
+    const updatedId = new Set(cover.map((item) => item.id));
+    let removedId = [...originalCover].filter((id) => !updatedId.has(id));
+    let addedId = [...updatedId].filter((id) => !originalCover.has(id));
+    let editedId = [...idThatUpdate];
+    console.log(removedId, addedId, cover, originalCover, editedId);
+    if (addedId.length > 0) {
+      const addedItem = cover
+        .filter((item) => addedId.includes(item.id))
+        .map((item) => {
+          console.log(item);
+          console.log(allProject);
+          const projectId = allProject.find(
+            (p) => p.name === item.project.project
+          )?.id;
+          console.log(projectId);
+          return {
+            id: parseInt(item.id, 10),
+            pic: item.pic,
+            position: item.position,
+            project_id: projectId,
+          };
+        });
+      console.log(addedItem);
+      await SupabaseServ.from("cover").upsert(addedItem);
+      addedId = [];
+    }
+    if (removedId.length > 0) {
+      const { error } = await SupabaseServ.from("cover")
+        .delete()
+        .in("id", removedId);
+      if (error) {
+        console.log(error.message);
+      }
+      removedId = [];
+    }
+    if (editedId.length > 0) {
+      const editedItem = cover
+        .filter((item) => editedId.includes(item.id))
+        .map((item) => {
+          const projectId = allProject.find(
+            (p) => p.name === item.project.project
+          )?.id;
+          let pic = item.pic;
+          if (
+            pic.startsWith(
+              "https://wkvbmoddmccxnxcieprm.supabase.co/storage/v1/object/public/cover/"
+            )
+          ) {
+            pic = pic.split("/").pop() || pic;
+          }
+
+          return {
+            pic,
+            position: item.position,
+            project_id: projectId,
+          };
+        });
+
+      console.log(editedId, editedItem);
+
+      for (let i = 0; i < editedId.length; i++) {
+        const id = editedId[i];
+        const item = editedItem[i];
+        const { error } = await SupabaseServ.from("cover")
+          .update(item)
+          .eq("id", id);
+
+        if (error) {
+          console.log(`Error updating id ${id}:`, error.message);
+        }
+      }
+      editedId = [];
+      editedId = [];
+    }
+  };
+  useEffect(() => {
+    handleUpdate();
+  }, [showSwapy]);
+  //editdatasupabase
+
+  //loaddata
+  const [cover, setCover] = useState<Cover[]>([]);
+  const [allTag, setAlltag] = useState<typeTag[]>([]);
+  const [allProject, setAllProject] = useState<typeProject[]>([]);
+  const [originalCover, setOriginalCover] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    const load = async () => {
+      const [coverRes, projectRes, tagRes] = await Promise.all([
+        fetchingCover(),
+        fetchingProject(),
+        fetchingTag(),
+      ]);
+      console.log(coverRes);
+      const { sorted, maxId } = coverRes;
+      console.log(projectRes);
+      setAllProject(projectRes);
+      setAlltag(tagRes);
+      console.log(tagRes);
+      id = maxId;
+      itemLength = sorted.length;
+      setCover(sorted);
+      const idItem = sorted.map((item) => item.id);
+      setOriginalCover((prev) => {
+        const newSet = new Set(prev);
+        sorted.forEach((item) => newSet.add(item.id));
+        return newSet;
+      });
+      setOnload(false);
+    };
+    load();
+  }, []);
+  useEffect(() => {
+    console.log(originalCover);
+  }, [originalCover]);
+  //loaddata
+
+  useEffect(() => {
+    console.log(showSwapy);
+  }, [showSwapy]);
+
+  if (onload) {
+    return <div>loading</div>;
+  }
+  if (user) {
     return (
-      <div ref={windowRef} className="h-[100vh] overflow-x-hidden">
-        {show && <CoverEdit onClose={()=>setShow(false)} isOpen={show}/>}
+      <div ref={windowRef} className="h-[100vh] overflow-x-hidden"
+      style={{ scrollbarGutter: "stable" }}>
+        {
+          <SwapperBoard
+            isOpen={showSwapy}
+            cover={cover}
+            itemLength={itemLength}
+            id={id}
+            allproject={allProject}
+            alltag={allTag}
+            onUpdate={(updatecover, updateitemlen, updateid, editId) => {
+              setCover(
+                updatecover.filter((i) => {
+                  const hasProject = i.project.project !== "";
+                  const hasValidTags =
+                    Array.isArray(i.project.tag) && i.project.tag[0] !== "";
+                  return hasProject && hasValidTags;
+                })
+              );
+              itemLength = updateitemlen;
+              id = updateid;
+              setIdThatUpdate(editId);
+              setShowSwapy(false);
+              console.log("updated");
+              console.log(updatecover);
+            }}
+            onSwapUpdate={(updatecover, updateitemlen, updateid, editId) => {
+              setCover(
+                updatecover.filter((i) => {
+                  const hasProject = i.project.project !== "";
+                  const hasValidTags =
+                    Array.isArray(i.project.tag) && i.project.tag[0] !== "";
+                  return hasProject && hasValidTags;
+                })
+              );
+              itemLength = updateitemlen;
+              id = updateid;
+              setIdThatUpdate(editId);
+              setShowSwapy(false);
+              setTimeout(() => {
+                setShowSwapy(true);
+              }, 10);
+            }}
+          />
+        }
         hello{`${user}`}
         <button className="bg-blue-500 text-white px-4 py-2" onClick={onLogOut}>
           Logut
         </button>
-        <div className="max-w-[100vw] w-[100vw] px-10 bg-amber-200 relative">
-          <SwapperBoard />
-          
+        <div className="max-w-[100vw] w-[100vw] px-10 bg-amber-200 relative flex xl:flex-row flex-col grid-cols-2">
+          <div className="bg-amber-400 xl:w-[30%]">
+            <button onClick={() => setShowSwapy(!showSwapy)}>open</button>
+          </div>
+          <div className="xl:w-[70%]">
+            <Mymasonrygrid Itempic={cover}/>
+          </div>
         </div>
       </div>
     );

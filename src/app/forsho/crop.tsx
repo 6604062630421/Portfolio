@@ -1,9 +1,16 @@
 // components/ImageUploader.tsx
 import React, { useState, useCallback, useRef } from "react";
 import { CropperRef, Cropper, StencilOverlay } from "react-advanced-cropper";
+import SupabaseService from "../service/supabase"
 import "react-advanced-cropper/dist/style.css";
 import './style.css'
-const ImageUploader: React.FC = () => {
+type Exportblob ={
+  exportblob:(bloblink:string,publicUrl:string)=>void;
+  filename:string,
+  oldpic:string|undefined,
+}
+const ImageUploader: React.FC<Exportblob> = ({exportblob,filename,oldpic}) => {
+  const supabase = SupabaseService.getClient();
   const [image, setImage] = useState<string | null>(null);
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
   const cropperRef = useRef<CropperRef | null>(null);
@@ -19,22 +26,53 @@ const ImageUploader: React.FC = () => {
 
   const cropImage = async () => {
     if (!image) return;
+    
     const cropped = cropperRef.current?.getCanvas();
     if (cropped) {
-      cropped.toBlob((blob) => {
+      cropped.toBlob(async(blob) => {
         if (blob) {
           const url = URL.createObjectURL(blob);
+          console.log(url);
           setCroppedImage(url);
+          const extension = blob.type.split('/')[1]||'bin';
+          const FileName = `${filename}-${Date.now()}.${extension}`
+          const {error} = await supabase.storage.from('cover').upload(FileName,blob,{
+            cacheControl:'3600',
+            upsert:true,
+            contentType:blob.type,
+          })
+          if(error){
+            console.log(error.message);
+          }
+          const {data:publicUrl} = await supabase.storage.from('cover').getPublicUrl(FileName);
+          console.log(publicUrl);
+          exportblob(url,publicUrl.publicUrl);
+          
         }
         else{
           console.log('blob null')
         }
       }, "image/png");
+      console.log(oldpic);
+      if(oldpic!==undefined || oldpic !=='./haerin.jpg'){
+        if (
+            oldpic!.startsWith(
+              "https://wkvbmoddmccxnxcieprm.supabase.co/storage/v1/object/public/cover/"
+            )
+          ) {
+            oldpic = oldpic!.split("/").pop() || oldpic;
+          }
+      const {error} = await supabase.storage.from('cover').remove([oldpic!]);
+      if(error){
+        console.log(error.message);
+      }
+      console.log("deleted oldpic")
+    }
     }
   };
   const onCropChange = (cropper: CropperRef) => {
     cropperRef.current = cropper;
-    console.log(cropper.getCoordinates(), cropper.getCanvas());
+    //console.log(cropper.getCoordinates(), cropper.getCanvas());
   };
   return (
     <div className="space-y-4">
