@@ -1,6 +1,7 @@
 import { FC } from "react";
 import Masonry from "react-masonry-css";
 import { Cover } from "../type";
+import Link from "next/link";
 type masonryType = {
     Itempic:Cover[];
 }
@@ -16,7 +17,7 @@ const MyMasonryGrid:FC<masonryType> = ({Itempic}) => {
     >
       {Itempic.map((src, i) => (
         <div key={i} className="mb-2 bg-white overflow-hidden shadow">
-          <img src={src.pic} className="w-full h-auto object-cover" />
+          <Link href={`/forsho/${src.project.project}`}><img src={src.pic} alt={src.project.project} className="w-full h-auto object-cover" /></Link>
         </div>
       ))}
     </Masonry>

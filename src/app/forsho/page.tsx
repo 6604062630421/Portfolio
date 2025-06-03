@@ -193,7 +193,7 @@ const Page = () => {
   }, [showSwapy]);
 
   if (onload) {
-    return <div>loading</div>;
+    return <div className="w-[100vw] h-[100vh] bg-black"></div>;
   }
   if (user) {
     return (
@@ -247,10 +247,10 @@ const Page = () => {
           Logut
         </button>
         <div className="max-w-[100vw] w-[100vw] px-10 bg-amber-200 relative flex xl:flex-row flex-col grid-cols-2">
-          <div className="bg-amber-400 xl:w-[30%]">
+          <div className="bg-amber-400 xl:w-[40%]">
             <button onClick={() => setShowSwapy(!showSwapy)}>open</button>
           </div>
-          <div className="xl:w-[70%]">
+          <div className="xl:w-[60%]">
             <Mymasonrygrid Itempic={cover}/>
           </div>
         </div>

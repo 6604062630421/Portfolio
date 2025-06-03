@@ -10,3 +10,18 @@
     height: 0;
     width: 0;
 }
+
+.fixedScrollbar{
+    scrollbar-gutter: "stable";
+}
+.custom-scroll .scrollbar-thumb {
+  background-color: #000000df;
+}
+.custom-scroll .scrollbar-track {
+  background-color: transparent;
+}
+[contenteditable] a {
+  pointer-events: auto;
+  text-decoration: underline;
+  color: #3b82f6; /* Tailwind blue-500 */
+}
