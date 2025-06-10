@@ -4,14 +4,14 @@ import { FC } from "react";
 import { Block } from "@/app/type";
 import { useRef, useEffect, useState } from "react";
 import SupabaseService from "@/app/service/supabase";
-
+import EditableBlock from "./renderEditable";
 type Props = {
   block: Block;
   onChange?: (id: string, content: string) => void;
 };
 const BlockRenderer: FC<Props> = ({ block, onChange }) => {
   const supabase = SupabaseService.getClient();
-  const ref = useRef<HTMLDivElement>(null);
+
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
     if (target.tagName === "A") {
@@ -22,39 +22,34 @@ const BlockRenderer: FC<Props> = ({ block, onChange }) => {
       }
     }
   };
-  // This util helps to return editable div
-  const renderEditableBlock = (className: string, content: string) => {
-    // Set initial content only once
-    useEffect(() => {
-      if (ref.current && ref.current.innerHTML !== content) {
-        ref.current.innerHTML = content;
-      }
-    }, []);
-
-    const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
-      onChange?.(block.id, e.currentTarget.innerHTML);
-    };
-
-    return (
-      <div
-        ref={ref}
-        contentEditable
-        suppressContentEditableWarning
-        onInput={handleInput}
-        onClick={handleClick}
-        className={className + " outline-none prose max-w-none"}
-        style={{ pointerEvents: "auto" }}
-      />
-    );
-  };
-
   switch (block.type) {
     case "heading":
-      return renderEditableBlock("text-2xl font-bold", block.content);
-    case "text":
-      return renderEditableBlock("text-base", block.content);
-    case "light-text":
-      return renderEditableBlock("text-sm text-gray-500", block.content);
+    return (
+      <EditableBlock
+        className="text-2xl font-bold"
+        content={block.content}
+        onChange={(content) => onChange?.(block.id, content)}
+        onClick={handleClick}
+      />
+    );
+  case "text":
+    return (
+      <EditableBlock
+        className="text-base"
+        content={block.content}
+        onChange={(content) => onChange?.(block.id, content)}
+        onClick={handleClick}
+      />
+    );
+  case "light-text":
+    return (
+      <EditableBlock
+        className="text-sm text-gray-500"
+        content={block.content}
+        onChange={(content) => onChange?.(block.id, content)}
+        onClick={handleClick}
+      />
+    );
     case "img": {
       const inputRef = useRef<HTMLInputElement>(null);
       const [isUploading, setIsUploading] = useState(false);
@@ -91,7 +86,9 @@ const BlockRenderer: FC<Props> = ({ block, onChange }) => {
           return;
         }
 
-        const { data } = supabase.storage.from("content").getPublicUrl(filePath);
+        const { data } = supabase.storage
+          .from("content")
+          .getPublicUrl(filePath);
         if (data?.publicUrl) {
           onChange?.(block.id, data.publicUrl);
         }
