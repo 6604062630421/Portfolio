@@ -20,7 +20,16 @@ const EditableBlock: FC<EditableBlockProps> = ({
       ref.current.innerHTML = content;
     }
   }, [content]);
-
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    if (target.tagName === "A") {
+      e.preventDefault();
+      const href = target.getAttribute("href");
+      if (href) {
+        window.open(href, "_blank", "noopener,noreferrer");
+      }
+    }
+  };
   const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
     onChange?.(e.currentTarget.innerHTML);
   };

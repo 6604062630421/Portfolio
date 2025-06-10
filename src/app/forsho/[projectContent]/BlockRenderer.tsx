@@ -2,7 +2,7 @@
 // BlockRenderer.tsx
 import { FC } from "react";
 import { Block } from "@/app/type";
-import { useRef, useEffect, useState } from "react";
+import { useRef,useState } from "react";
 import SupabaseService from "@/app/service/supabase";
 import EditableBlock from "./renderEditable";
 type Props = {
@@ -11,7 +11,9 @@ type Props = {
 };
 const BlockRenderer: FC<Props> = ({ block, onChange }) => {
   const supabase = SupabaseService.getClient();
-
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
     if (target.tagName === "A") {
@@ -22,6 +24,7 @@ const BlockRenderer: FC<Props> = ({ block, onChange }) => {
       }
     }
   };
+  
   switch (block.type) {
     case "heading":
     return (
@@ -51,9 +54,6 @@ const BlockRenderer: FC<Props> = ({ block, onChange }) => {
       />
     );
     case "img": {
-      const inputRef = useRef<HTMLInputElement>(null);
-      const [isUploading, setIsUploading] = useState(false);
-      const [uploadError, setUploadError] = useState<string | null>(null);
 
       const handleClickImage = () => {
         inputRef.current?.click();
