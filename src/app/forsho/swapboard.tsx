@@ -72,7 +72,6 @@ const SwapperBoard: FC<SwapperProp> = ({
       // dragOnHold: true
     });
     swapyRef.current.onSwap((event) => {
-      let slotid:string
       const dragged = event.draggingItem;
       const newSlotArr = event.newSlotItemMap.asArray;
       const updatedItems = items.map((item) => {
@@ -80,7 +79,6 @@ const SwapperBoard: FC<SwapperProp> = ({
           (slotItem) => {
             console.log("fromslot"+item.id)
             setIdThatEdited((prev) => new Set(prev).add(item.id));
-            slotid = item.id;
             return slotItem.item === item.id}
         );
         return {
