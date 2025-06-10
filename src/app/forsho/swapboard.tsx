@@ -177,8 +177,8 @@ const SwapperBoard: FC<SwapperProp> = ({
     console.log(IdThatEdited);
   }, [IdThatEdited]);
   //tag+project 
-  const [allTag,setAlltag] = useState<typeTag[]>(alltag);
-  const [allProject,setAllProject] = useState<typeProject[]>(allproject);
+  const [allTag] = useState<typeTag[]>(alltag);
+  const [allProject] = useState<typeProject[]>(allproject);
   const handleEditBFswapt = ()=>{
     setShow(false)
     onSwapUpdate(items, itemlen, maxid,IdThatEdited);

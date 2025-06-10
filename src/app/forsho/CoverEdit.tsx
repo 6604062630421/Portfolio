@@ -5,7 +5,6 @@ import ImageUploader from "./crop";
 import AutocompleteInput from "./Autocorrect";
 import MultiTagInput from "./multipletag";
 import type { Cover ,CoverEdit as CoverItem, typeProject, typeTag} from "../type";
-import SupabaseService from "../service/supabase";
 interface CoverEditProps {
   onClose: () => void;
   isOpen: boolean;
