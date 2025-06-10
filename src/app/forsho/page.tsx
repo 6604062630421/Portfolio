@@ -8,6 +8,7 @@ import { fetchingCover, fetchingProject, fetchingTag } from "./fetchingCover";
 import type { Cover, typeProject, typeTag } from "../type";
 import SupabaseService from "../service/supabase";
 import Mymasonrygrid from "./masonry";
+import Scene from "./threesection/Hero";
 let itemLength: number;
 let id: number;
 
@@ -157,6 +158,11 @@ const Page = () => {
   const [allTag, setAlltag] = useState<typeTag[]>([]);
   const [allProject, setAllProject] = useState<typeProject[]>([]);
   const [originalCover, setOriginalCover] = useState<Set<string>>(new Set());
+  const [refresh, setRefresh] = useState(0);
+  const forceRender = () => {setRefresh((prev) => prev + 1);}
+  useEffect(()=>{
+    console.log(refresh);
+  },[refresh])
   useEffect(() => {
     const load = async () => {
       const [coverRes, projectRes, tagRes] = await Promise.all([
@@ -207,7 +213,7 @@ const Page = () => {
             id={id}
             allproject={allProject}
             alltag={allTag}
-            onUpdate={(updatecover, updateitemlen, updateid, editId) => {
+            onUpdate={(updatecover, updateitemlen, updateid, editId,drag) => {
               setCover(
                 updatecover.filter((i) => {
                   const hasProject = i.project.project !== "";
@@ -220,6 +226,9 @@ const Page = () => {
               id = updateid;
               setIdThatUpdate(editId);
               setShowSwapy(false);
+              if(drag){
+                window.location.reload();
+              }
               console.log("updated");
               console.log(updatecover);
             }}
@@ -236,6 +245,7 @@ const Page = () => {
               id = updateid;
               setIdThatUpdate(editId);
               setShowSwapy(false);
+              forceRender();
               setTimeout(() => {
                 setShowSwapy(true);
               }, 10);
@@ -246,12 +256,13 @@ const Page = () => {
         <button className="bg-blue-500 text-white px-4 py-2" onClick={onLogOut}>
           Logut
         </button>
-        <div className="max-w-[100vw] w-[100vw] px-10 bg-amber-200 relative flex xl:flex-row flex-col grid-cols-2">
-          <div className="bg-amber-400 xl:w-[40%]">
+        <Scene/>
+        <div className="max-w-[100vw] w-[100vw] px-10  relative flex xl:flex-row flex-col grid-cols-2">
+          <div className="xl:w-[40%]">
             <button onClick={() => setShowSwapy(!showSwapy)}>open</button>
           </div>
           <div className="xl:w-[60%]">
-            <Mymasonrygrid Itempic={cover}/>
+            <Mymasonrygrid key={JSON.stringify(cover.map(i => i.id))} Itempic={cover} />
           </div>
         </div>
       </div>

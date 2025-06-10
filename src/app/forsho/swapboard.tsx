@@ -15,7 +15,7 @@ type SwapperProp = {
   id: number;
   allproject : typeProject[];
   alltag : typeTag[];
-  onUpdate: (updatecover: Cover[], itemlen: number, id: number,editId:Set<string>) => void;
+  onUpdate: (updatecover: Cover[], itemlen: number, id: number,editId:Set<string>,drag:boolean) => void;
   onSwapUpdate: (updatecover: Cover[], itemlen: number, id: number,editId:Set<string>) => void;
 };
 const SwapperBoard: FC<SwapperProp> = ({
@@ -45,8 +45,8 @@ const SwapperBoard: FC<SwapperProp> = ({
 
   const [show, setShow] = useState<boolean>(false);
   const [selectedcover, setselectedcover] = useState<Cover>();
+  const [isDrag,setDrag] = useState(false);
   const MotionIconPencil = motion.create(Pencil);
-  const supabase = SupabaseService.getClient();
   useEffect(() => {
     if (swapyRef.current) {
       utils.dynamicSwapy(
@@ -94,6 +94,7 @@ const SwapperBoard: FC<SwapperProp> = ({
       if (draddedItem) {
         console.log(`Dragged ${draddedItem.id} to slot ${newIndex}`);
         setIdThatEdited((prev) => new Set(prev).add(draddedItem.id));
+        setDrag(true);
       }
       setItems(updatedItems);
       setSlotItemMap(newSlotArr);
@@ -195,7 +196,7 @@ const SwapperBoard: FC<SwapperProp> = ({
               console.log("animatecomplete");
             }
           }}
-          onClick={() => onUpdate(items, itemlen, maxid,IdThatEdited)}
+          onClick={() => onUpdate(items, itemlen, maxid,IdThatEdited,isDrag)}
           className="fixed w-[100vw] h-[100vh] bg-black/50 justify-center flex items-center z-50 inset-0"
         >
           <motion.div
