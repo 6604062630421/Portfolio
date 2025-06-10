@@ -13,7 +13,6 @@ let itemLength: number;
 let id: number;
 
 const Page = () => {
-  const [showProject, setShowProject] = useState<boolean>(false);
   const [showSwapy, setShowSwapy] = useState<boolean>(false);
   const [onload, setOnload] = useState<boolean>(true);
   //loaddatasupabase
@@ -179,7 +178,6 @@ const Page = () => {
       id = maxId;
       itemLength = sorted.length;
       setCover(sorted);
-      const idItem = sorted.map((item) => item.id);
       setOriginalCover((prev) => {
         const newSet = new Set(prev);
         sorted.forEach((item) => newSet.add(item.id));

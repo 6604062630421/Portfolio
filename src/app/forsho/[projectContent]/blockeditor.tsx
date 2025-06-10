@@ -293,7 +293,7 @@ const BlockEditor: FC<blockEditor> = ({ block,onPrepare }) => {
           items={blocks.map((b) => b.id)}
           strategy={verticalListSortingStrategy}
         >
-          {blocks.map((block, i) => (
+          {blocks.map((block) => (
               <SortableItem
                 key={block.id}
                 block={block}

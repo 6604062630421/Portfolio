@@ -1,7 +1,7 @@
 // components/AutocompleteInput.tsx
 "use client";
 
-import { useState, useEffect,FC} from "react";
+import { useState, useEffect} from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { typeProject } from "../type";
 import SupabaseService from "../service/supabase";
@@ -17,7 +17,7 @@ export default function AutocompleteInput({onSubmit,projectName,allproject}:Proj
   const [input, setInput] = useState(projectName);
   const [filtered, setFiltered] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [allProjectName,setAllProjectName] = useState(allproject.map((i)=>i.name));
+  const [allProjectName] = useState(allproject.map((i)=>i.name));
   useEffect(() => {
     const matches = allProjectName.filter((s) =>
       s.toLowerCase().includes(input.toLowerCase())

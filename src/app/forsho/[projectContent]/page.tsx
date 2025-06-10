@@ -1,12 +1,9 @@
 "use client";
-import { useEffect, useRef, use, useState } from "react";
+import { useEffect,use, useState } from "react";
 import BlockEditor from "./blockediotWrap";
 import SupabaseService from "@/app/service/supabase";
 import { Block } from "@/app/type";
 import { v4 as uuidv4 } from "uuid";
-const initialBlocks: Block[] = [
-  { id: "-1", type: "heading", content: "Welcome to My Page", position: 1 },
-];
 export default function Page(promiseParams: {
   params: Promise<{ projectContent: string }>;
 }) {

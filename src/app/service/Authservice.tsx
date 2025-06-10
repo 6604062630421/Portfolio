@@ -1,4 +1,3 @@
-import React from 'react'
 import { Session, SupabaseClient } from '@supabase/supabase-js';
 import SupabaseService  from './supabase';
 class AuthService {

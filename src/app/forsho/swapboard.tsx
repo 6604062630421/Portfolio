@@ -5,7 +5,6 @@ import { Pencil } from "lucide-react";
 import "./style.css";
 import CoverEdit from "./CoverEdit";
 import { AnimatePresence, motion } from "framer-motion";
-import SupabaseService from "../service/supabase";
 import type { Cover, CoverEdit as CoverItem, typeProject, typeTag } from "../type";
 
 type SwapperProp = {

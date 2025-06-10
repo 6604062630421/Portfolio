@@ -1,6 +1,6 @@
 // components/ImageUploader.tsx
-import React, { useState, useCallback, useRef } from "react";
-import { CropperRef, Cropper, StencilOverlay } from "react-advanced-cropper";
+import React, { useState, useRef } from "react";
+import { CropperRef, Cropper } from "react-advanced-cropper";
 import SupabaseService from "../service/supabase"
 import "react-advanced-cropper/dist/style.css";
 import './style.css'

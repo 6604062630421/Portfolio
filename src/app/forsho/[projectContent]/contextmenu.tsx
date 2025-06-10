@@ -1,7 +1,7 @@
 "use client";
 import type { Block } from "@/app/type";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect} from "react";
 
 const ContextMenu = ({
   x,

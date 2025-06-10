@@ -1,12 +1,11 @@
 // components/AutocompleteInput.tsx
 "use client";
 
-import { useState, useEffect, FC } from "react";
+import { useState, useEffect} from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { typeTag } from "../type";
 import SupabaseService from '../service/supabase';
 
-const suggestions = ["Website Design", "Mobile App", "Branding", "Logo Design"];
 
 type Project = {
   selectedtag:string[]
@@ -20,7 +19,7 @@ export default function AutocompleteInput({ onSubmit ,selectedtag,alltag}: Proje
   const [tags, setTags] = useState<string[]>([...selectedtag]);
   const [filtered, setFiltered] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [allTagName,setAllTagName] = useState(alltag.map((i)=>i.name));
+  const [allTagName] = useState(alltag.map((i)=>i.name));
   useEffect(()=>{
     setFiltered(allTagName)
   },[alltag])

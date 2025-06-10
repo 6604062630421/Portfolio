@@ -16,9 +16,8 @@ interface CoverEditProps {
   allproject:typeProject[];
 }
 const CoverEdit: FC<CoverEditProps> = ({ onClose, isOpen ,selectedCover ,onExit,isUpdate,alltag,allproject}) => {
-  const supabase = SupabaseService.getClient();
-  const [allTag,setAllTag] = useState<typeTag[]>(alltag);
-  const [allProject,setAllProject] = useState<typeProject[]>(allproject);
+  const [allTag] = useState<typeTag[]>(alltag);
+  const [allProject] = useState<typeProject[]>(allproject);
   const [form,setForm] = useState<CoverItem>({
     Project:selectedCover?.project.project??"",
     Tag:selectedCover?.project.tag.join(",")??"",

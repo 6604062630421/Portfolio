@@ -17,24 +17,6 @@ class SupabaseService{
     getClient(){
         return this.supabase;
     }
-    async uploadToStorage(bucket:string,blob:Blob){
-        const supabase = this.supabase;
-        const extension = blob.type.split('/')[1]||'bin';
-        const fileName = `${Date.now()}.${extension}`;
-        const {data,error} = await supabase.storage.from(bucket).upload(fileName,blob,{
-            cacheControl:'3600',
-            upsert:true,
-            contentType:blob.type,
-        })
-        if(error){
-            console.log(error.message);
-            return null
-        }
-        const{data:publicUrlData} = supabase.storage.from(bucket).getPublicUrl(fileName);
-        return{uploadData:data,
-            publicUrl:fileName
-        }
-    }
 }
 export default SupabaseService.getInstance();
     
