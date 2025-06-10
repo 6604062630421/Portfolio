@@ -48,7 +48,7 @@ const SortableItem = ({ block, dragHandle = true, onChange, onRightClick }: Sort
         </div>
       )}
       <div className="flex-1">
-        <BlockRenderer block={block} />
+        <BlockRenderer block={block} onChange={onChange}/>
       </div>
     </div>
   );
