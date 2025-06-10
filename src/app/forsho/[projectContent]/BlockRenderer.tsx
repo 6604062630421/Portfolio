@@ -11,7 +11,7 @@ type Props = {
 };
 const BlockRenderer: FC<Props> = ({ block, onChange }) => {
   const supabase = SupabaseService.getClient();
-
+  const ref = useRef<HTMLDivElement>(null);
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
     if (target.tagName === "A") {
@@ -24,8 +24,6 @@ const BlockRenderer: FC<Props> = ({ block, onChange }) => {
   };
   // This util helps to return editable div
   const renderEditableBlock = (className: string, content: string) => {
-    const ref = useRef<HTMLDivElement>(null);
-
     // Set initial content only once
     useEffect(() => {
       if (ref.current && ref.current.innerHTML !== content) {
