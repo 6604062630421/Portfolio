@@ -1,25 +1,18 @@
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Box, Sphere } from '@react-three/drei'
+import { Box, OrbitControls, Sphere ,Environment} from '@react-three/drei'
+import Knightmodel from './loadmodel'
 
 export default function Scene() {
+  // https://cdn.jsdelivr.net/gh/6604062630421/3d-assets/the_forgotten_knight.glb
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
-      <Canvas>
+      <Canvas camera={{ fov: 40, position: [0, 2, 5] }}>
         {/* แสง */}
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} />
-        
+        <ambientLight intensity={4} />
+        <Environment preset="city" />
         {/* Objects */}
-        <Box position={[-2, 0, 0]} args={[1, 1, 1]}>
-          <meshStandardMaterial color="orange" />
-        </Box>
-        
-        <Sphere position={[2, 0, 0]} args={[0.5, 32, 32]}>
-          <meshStandardMaterial color="hotpink" />
-        </Sphere>
-        
-        {/* Controls */}
-        <OrbitControls />
+        <Knightmodel position={[0, 0, 0]} scale={0.5} />
+        <OrbitControls/>
       </Canvas>
     </div>
   )
