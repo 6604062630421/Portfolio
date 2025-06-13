@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber'
-import { Box, OrbitControls, Sphere ,Environment} from '@react-three/drei'
+import { OrbitControls,Environment} from '@react-three/drei'
 import Knightmodel from './loadmodel'
 
 export default function Scene() {

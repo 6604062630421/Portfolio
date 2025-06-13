@@ -23,18 +23,6 @@ type betdata = {
   bet: number;
 };
 // ตัวอย่างข้อมูล
-const rawData: BetResult[] = [
-  { date: "2025-06-13T01:15:00", res: "banker" },
-  { date: "2025-06-13T02:50:00", res: "player" },
-  { date: "2025-06-13T03:30:00", res: "player" },
-  { date: "2025-06-13T03:45:00", res: "tie" },
-  { date: "2025-06-13T06:00:00", res: "banker" },
-  { date: "2025-06-13T07:15:00", res: "tie" },
-  { date: "2025-06-13T07:45:00", res: "player" },
-  { date: "2025-06-13T10:00:00", res: "banker" },
-  { date: "2025-06-13T11:45:00", res: "banker" },
-  { date: "2025-06-13T11:55:00", res: "tie" },
-];
 
 function groupDataByTimeSlot(data: BetResult[]) {
   const slotMap: Record<
@@ -63,7 +51,7 @@ type barcharprop = {
   data: betdata[];
 };
 export default function BarChartByTime({ data }: barcharprop) {
-const { labels, chartData } = useMemo(() => {
+const {chartData } = useMemo(() => {
   const grouped = groupDataByTimeSlot(
     data.map((i) => {
       return {
