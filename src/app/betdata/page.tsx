@@ -135,14 +135,18 @@ function calculateWinrate(data: betdata[]) {
       
         <BarChartByTime data={data}/>
         <WinRateLineChart data={data}/>
-        <div className="flex gap-5">
-          <div className="border-1 max-w-100 min-w-100 h-30 rounded p-3">
-          <div className="">TotalRound</div>
-          <div className=" h-full text-4xl flex justify-center">{data.length}</div>
+        <div className="flex gap-5 w-full grid-cols-2">
+          <div className="border-1  h-30 w-full rounded p-3">
+          <div className="pb-2">TotalRound</div>
+          <div className=" h-full text-3xl flex justify-center">{data.length}</div>
         </div>
-        <div className="border-1 max-w-100 min-w-100 h-30 rounded p-3">
-          <div className="">TotalWinrate</div>
-          <div className=" h-full text-4xl flex justify-center">{calculateWinrate(data)} %</div>
+        <div className="border-1  h-30 w-full rounded p-3">
+          <div className="pb-2">TotalWinrate</div>
+          <div className=" h-full text-3xl flex justify-center">{calculateWinrate(data)} %</div>
+        </div>
+        <div className="border-1  h-30 w-full rounded p-3">
+          <div className="pb-2">HourSpend</div>
+          <div className=" h-full text-3xl flex justify-center">{((data.length)/2)/60} Hr</div>
         </div>
         </div>
         {data.map((item, i) => (
