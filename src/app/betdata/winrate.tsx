@@ -28,6 +28,7 @@ function groupAndCalculateWinRatePerHour(data: Bet[]) {
   const hourlyStats: Record<string, { total: number; wins: number }> = {}
 
   data.forEach(({ date, res, bet }) => {
+    if(bet===0)return;
     const d = new Date(date)
     d.setMinutes(0, 0, 0) // ปัดลงเป็นต้นชั่วโมง
     const hourKey = d.toISOString()

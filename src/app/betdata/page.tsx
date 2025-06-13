@@ -78,6 +78,21 @@ const chaneword= (bet:number)=>{
     }
     
 }
+function calculateWinrate(data: betdata[]) {
+  let total = 0;
+  let wins = 0;
+
+  data.forEach(({ res, bet }) => {
+    if (bet !== 0) { // ข้ามกรณี tie
+      total++;
+      if (res === bet) {
+        wins++;
+      }
+    }
+  });
+
+  return total > 0 ? parseFloat(((wins / total) * 100).toFixed(2)) : 0;
+}
   return (
     <div className="w-full h-full">
       <div className="flex flex-col md:flex-row gap-5 w-full justify-center">
@@ -120,6 +135,16 @@ const chaneword= (bet:number)=>{
       
         <BarChartByTime data={data}/>
         <WinRateLineChart data={data}/>
+        <div className="flex gap-5">
+          <div className="border-1 max-w-100 min-w-100 h-30 rounded p-3">
+          <div className="">TotalRound</div>
+          <div className=" h-full text-4xl flex justify-center">{data.length}</div>
+        </div>
+        <div className="border-1 max-w-100 min-w-100 h-30 rounded p-3">
+          <div className="">TotalWinrate</div>
+          <div className=" h-full text-4xl flex justify-center">{calculateWinrate(data)} %</div>
+        </div>
+        </div>
         {data.map((item, i) => (
           <div key={i}>
             {new Date(item.date).toLocaleString("th-TH", {

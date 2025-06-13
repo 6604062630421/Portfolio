@@ -51,58 +51,67 @@ type barcharprop = {
   data: betdata[];
 };
 export default function BarChartByTime({ data }: barcharprop) {
-const {chartData } = useMemo(() => {
-  const grouped = groupDataByTimeSlot(
-    data.map((i) => {
-      return {
-        date: new Date(i.date).toISOString(),
-        res:
-          i.bet === 0
-            ? "tie"
-            : i.bet === 1
-            ? "player"
-            : i.bet === -1
-            ? "banker"
-            : "tie",
-      };
-    })
-  );
-  const sortedLabels = Object.keys(grouped).sort();
-  const banker: number[] = [];
-  const player: number[] = [];
-  const tie: number[] = [];
+  const { chartData } = useMemo(() => {
+    const grouped = groupDataByTimeSlot(
+      data.map((i) => {
+        return {
+          date: new Date(i.date).toISOString(),
+          res:
+            i.bet === 0
+              ? "tie"
+              : i.bet === 1
+              ? "player"
+              : i.bet === -1
+              ? "banker"
+              : "tie",
+        };
+      })
+    );
+    const sortedLabels = Object.keys(grouped).sort();
+    const banker: number[] = [];
+    const player: number[] = [];
+    const tie: number[] = [];
+    const sum: number[] = [];
+    sortedLabels.forEach((label) => {
+      banker.push(grouped[label].banker);
+      player.push(grouped[label].player);
+      tie.push(grouped[label].tie);
+      sum.push(
+        grouped[label].banker + grouped[label].player + grouped[label].tie
+      );
+    });
 
-  sortedLabels.forEach((label) => {
-    banker.push(grouped[label].banker);
-    player.push(grouped[label].player);
-    tie.push(grouped[label].tie);
-  });
-
-  return {
-    labels: sortedLabels,
-    chartData: {
+    return {
       labels: sortedLabels,
-      datasets: [
-        {
-          label: "Banker",
-          data: banker,
-          backgroundColor: "#EF4444",
-        },
-        {
-          label: "Player",
-          data: player,
-          backgroundColor: "#3B82F6",
-        },
-        {
-          label: "Tie",
-          data: tie,
-          backgroundColor: "#10B981",
-        },
-      ],
-    },
-  };
-}, [data]); // ✅ ใส่ dependency ให้ useMemo ทำงานเมื่อ data เปลี่ยน
-
+      chartData: {
+        labels: sortedLabels,
+        datasets: [
+          {
+            label: "Banker",
+            data: banker,
+            backgroundColor: "#EF4444",
+          },
+          {
+            label: "Player",
+            data: player,
+            backgroundColor: "#3B82F6",
+          },
+          {
+            label: "Tie",
+            data: tie,
+            backgroundColor: "#10B981",
+          },
+          {
+            lable: "Sum",
+            data: sum,
+            backgroundColor: "rgba(0,0,0,0)", // ใสโปร่งใส
+            borderWidth: 0,
+            barThickness: 0, // แท่งแทบจะไม่แสดง
+          },
+        ],
+      },
+    };
+  }, [data]); // ✅ ใส่ dependency ให้ useMemo ทำงานเมื่อ data เปลี่ยน
 
   return (
     <div style={{ width: "100%", maxWidth: 800, margin: "auto" }}>
@@ -112,7 +121,7 @@ const {chartData } = useMemo(() => {
           responsive: true,
           plugins: {
             legend: { position: "top" },
-            tooltip: { mode: "index" },
+            tooltip: { mode: "index", intersect: false },
           },
           scales: {
             x: {
