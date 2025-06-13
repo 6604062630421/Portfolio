@@ -1,3 +1,4 @@
+'use client'
 import { useGLTF } from "@react-three/drei";
 import { useEffect,useRef } from "react";
 import { SkinnedMesh, Bone } from "three";
