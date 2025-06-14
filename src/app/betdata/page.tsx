@@ -46,25 +46,46 @@ const Page = () => {
     console.log(data);
   }, [data]);
   const fetchData = async () => {
-  const { data, error } = await supabase.from("betdata").select("*");
-  if (error) {
-    console.log(error);
-  } else if (data) {
-    // Sort data ตาม created_at (ISO string) แบบใหม่
-    const sortedData = data.sort(
-      (a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
+  const pageSize = 1000;
+  const maxRows = 5000; // กำหนดว่าจะดึงได้สูงสุดกี่แถว
+  let allData: any[] = [];
 
-    // แปลงข้อมูลให้อยู่ในรูปแบบ betdata ที่มี date เป็น ISO string
-    const mapdata: betdata[] = sortedData.map((item) => ({
-      date: item.created_at, // เก็บ ISO string ตรง ๆ เลย
-      res: item.Res,
-      bet:item.bet
-    }));
+  for (let i = 0; i < Math.ceil(maxRows / pageSize); i++) {
+    const from = i * pageSize;
+    const to = from + pageSize - 1;
 
-    setData(mapdata);
+    const { data, error } = await supabase
+      .from("betdata")
+      .select("*")
+      .range(from, to);
+
+    if (error) {
+      console.error("Error loading data from", from, "to", to, error);
+      break;
+    }
+
+    if (data && data.length > 0) {
+      allData.push(...data);
+      if (data.length < pageSize) break; // แสดงว่าข้อมูลหมดแล้ว
+    } else {
+      break;
+    }
   }
+
+  // Sort data ตาม created_at
+  const sortedData = allData.sort(
+    (a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+
+  // Map ให้อยู่ในรูปแบบ betdata[]
+  const mapdata: betdata[] = sortedData.map((item) => ({
+    date: item.created_at, // ISO string
+    res: item.Res,
+    bet: item.bet,
+  }));
+
+  setData(mapdata);
 };
 
 useEffect(() => {
