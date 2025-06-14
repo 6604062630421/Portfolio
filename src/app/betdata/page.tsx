@@ -8,6 +8,11 @@ type betdata = {
   res: number;
   bet: number;
 };
+type RawData = {
+  created_at: string;
+  Res: number;
+  bet: number;
+};
 const Page = () => {
   const [mybet,setMybet] = useState<number>();
   const [result,setResult] = useState<number>();
@@ -48,7 +53,7 @@ const Page = () => {
   const fetchData = async () => {
   const pageSize = 1000;
   const maxRows = 5000; // กำหนดว่าจะดึงได้สูงสุดกี่แถว
-  let allData: any[] = [];
+  const allData: RawData[] = [];
 
   for (let i = 0; i < Math.ceil(maxRows / pageSize); i++) {
     const from = i * pageSize;
