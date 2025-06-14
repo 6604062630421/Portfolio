@@ -167,7 +167,7 @@ function calculateWinrate(data: betdata[]) {
         </div>
         <div className="border-1  h-30 w-full rounded p-3">
           <div className="pb-2">HourSpend</div>
-          <div className=" h-full text-3xl flex justify-center">{((data.length)/2)/60} Hr</div>
+          <div className=" h-full text-3xl flex justify-center">{(((data.length)/2)/60).toFixed(2)} Hr</div>
         </div>
         </div>
         {data.map((item, i) => (
