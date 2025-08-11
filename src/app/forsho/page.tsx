@@ -9,6 +9,7 @@ import type { Cover, typeProject, typeTag } from "../type";
 import SupabaseService from "../service/supabase";
 import Mymasonrygrid from "./masonry";
 import Scene from "./threesection/Hero";
+import { motion, AnimatePresence } from "framer-motion";
 let itemLength: number;
 let id: number;
 
@@ -19,6 +20,7 @@ const Page = () => {
   const supabase = AuthService.getInstance();
   const SupabaseServ = SupabaseService.getClient();
   const [user, setUser] = useState<unknown>();
+  const [onAnimated, setAnimated] = useState(false);
   const windowRef = useRef(null);
   const authListen = () => {
     const { data: authListener } = supabase.supabase.auth.onAuthStateChange(
@@ -158,10 +160,13 @@ const Page = () => {
   const [allProject, setAllProject] = useState<typeProject[]>([]);
   const [originalCover, setOriginalCover] = useState<Set<string>>(new Set());
   const [refresh, setRefresh] = useState(0);
-  const forceRender = () => {setRefresh((prev) => prev + 1);}
-  useEffect(()=>{
+  const [AnimatedDone, setAnimatedDone] = useState(false);
+  const forceRender = () => {
+    setRefresh((prev) => prev + 1);
+  };
+  useEffect(() => {
     console.log(refresh);
-  },[refresh])
+  }, [refresh]);
   useEffect(() => {
     const load = async () => {
       const [coverRes, projectRes, tagRes] = await Promise.all([
@@ -195,14 +200,16 @@ const Page = () => {
   useEffect(() => {
     console.log(showSwapy);
   }, [showSwapy]);
-
   if (onload) {
     return <div className="w-[100vw] h-[100vh] bg-black"></div>;
   }
   if (user) {
     return (
-      <div ref={windowRef} className="h-[100vh] overflow-x-hidden"
-      style={{ scrollbarGutter: "stable" }}>
+      <div
+        ref={windowRef}
+        className="h-[100vh] overflow-x-hidden overflow-y-scroll"
+        style={{ scrollbarGutter: "stable" }}
+      >
         {
           <SwapperBoard
             isOpen={showSwapy}
@@ -211,33 +218,40 @@ const Page = () => {
             id={id}
             allproject={allProject}
             alltag={allTag}
-            onUpdate={(updatecover, updateitemlen, updateid, editId,drag) => {
+            onUpdate={(updatecover, updateitemlen, updateid, editId, drag) => {
               setCover(
-                updatecover.filter((i) => {
-                  const hasProject = i.project.project !== "";
-                  const hasValidTags =
-                    Array.isArray(i.project.tag) && i.project.tag[0] !== "";
-                  return hasProject && hasValidTags;
-                })
+                updatecover
+                  .filter(
+                    (i) =>
+                      i.project.project !== "" &&
+                      Array.isArray(i.project.tag) &&
+                      i.project.tag[0] !== ""
+                  )
+                  .map((i) => ({
+                    ...i,
+                    project: { ...i.project },
+                    tag: [...(i.project.tag || [])],
+                  }))
               );
               itemLength = updateitemlen;
               id = updateid;
               setIdThatUpdate(editId);
               setShowSwapy(false);
-              if(drag){
-                window.location.reload();
+              if (drag) {
               }
               console.log("updated");
               console.log(updatecover);
             }}
             onSwapUpdate={(updatecover, updateitemlen, updateid, editId) => {
               setCover(
-                updatecover.filter((i) => {
-                  const hasProject = i.project.project !== "";
-                  const hasValidTags =
-                    Array.isArray(i.project.tag) && i.project.tag[0] !== "";
-                  return hasProject && hasValidTags;
-                })
+                updatecover
+                  .filter((i) => {
+                    const hasProject = i.project.project !== "";
+                    const hasValidTags =
+                      Array.isArray(i.project.tag) && i.project.tag[0] !== "";
+                    return hasProject && hasValidTags;
+                  })
+                  .map((i) => ({ ...i }))
               );
               itemLength = updateitemlen;
               id = updateid;
@@ -250,17 +264,41 @@ const Page = () => {
             }}
           />
         }
-        hello{`${user}`}
-        <button className="bg-blue-500 text-white px-4 py-2" onClick={onLogOut}>
-          Logut
-        </button>
-        <Scene/>
-        <div className="max-w-[100vw] w-[100vw] px-10  relative flex xl:flex-row flex-col grid-cols-2">
-          <div className="xl:w-[40%]">
-            <button onClick={() => setShowSwapy(!showSwapy)}>open</button>
-          </div>
-          <div className="xl:w-[60%]">
-            <Mymasonrygrid key={JSON.stringify(cover.map(i => i.id))} Itempic={cover} />
+        <div className="fixed z-20 h-100 w-100">
+          hello{`${user}`}
+          <button
+            className="cursor-pointer bg-blue-500 text-white px-4 py-2"
+            onClick={onLogOut}
+          >
+            Logut
+          </button>
+          <button className="h-10 w-10 px-6 cursor-pointer" onClick={() => setShowSwapy(!showSwapy)}>open</button>
+        </div>
+        {/* Background Scene */}
+        <div className="fixed inset-0 -z-10">
+          <Scene onthisAnimatedDone={(val) => setAnimated(val)} />
+        </div>
+        <div className="relative w-screen max-w-[100vw] h-full px-10 flex flex-col xl:flex-row">
+          {/* Left Column */}
+          <div className="w-full xl:w-[40%]"></div>
+
+          {/* Right Column */}
+          <div className="w-full xl:w-[60%] h-[98%] mt-10">
+            <AnimatePresence>
+              {onAnimated && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                >
+                  <Mymasonrygrid
+                    key={refresh}
+                    Itempic={cover}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>

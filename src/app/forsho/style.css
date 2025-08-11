@@ -10,8 +10,9 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    background: #ccc8fd;
+    background: #ffffff;
     width: 100%;
+    border-radius: 3px;
   }
   
   /* .item-2 {
@@ -25,17 +26,17 @@
   
   .item.item--add {
     background: transparent;
-    border: 4px solid #4338ca;
+    border: 4px solid #ffffff;
     cursor: pointer;
     user-select: none;
   }
   
   .item.item--add:hover {
-    background: #4338cacc;
+    background: #dbdbdbcc;
   }
   
   .delete {
-    background-color: #aea8f8;
+    background-color: #ffffff;
     position: absolute;
     right: 20px;
     top: 10px;
@@ -51,12 +52,12 @@
   }
   
   .delete:hover {
-    background-color: #928be2;
+    background-color: #ececec;
     
   }
 
   .custom {
-    background-color: #4338ca;
+    background-color: #fafafa;
   }
   
   /* .item[data-swapy-dragging] {

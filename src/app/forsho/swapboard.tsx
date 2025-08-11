@@ -77,7 +77,6 @@ const SwapperBoard: FC<SwapperProp> = ({
       const updatedItems = items.map((item) => {
         const newIndex = newSlotArr.findIndex(
           (slotItem) => {
-            console.log("fromslot"+item.id)
             setIdThatEdited((prev) => new Set(prev).add(item.id));
             return slotItem.item === item.id}
         );
@@ -89,7 +88,6 @@ const SwapperBoard: FC<SwapperProp> = ({
       const draddedItem = items.find((i) => i.id === dragged);
       const newIndex = newSlotArr.findIndex((s) => s.item === dragged);
       if (draddedItem) {
-        console.log(`Dragged ${draddedItem.id} to slot ${newIndex}`);
         setIdThatEdited((prev) => new Set(prev).add(draddedItem.id));
         setDrag(true);
       }
@@ -101,9 +99,6 @@ const SwapperBoard: FC<SwapperProp> = ({
       }
     });
   }, [isOpen,items.length]);
-  useEffect(()=>{
-    console.log(items)
-  },[items.length])
   const addItem = async():Promise<Cover> => {
     const localItemLen = itemlen + 1;
     const localMaxId = maxid + 1;
@@ -162,18 +157,13 @@ const SwapperBoard: FC<SwapperProp> = ({
             }
           : item
       );
-      console.log(updatingItem);
       setItems(updatingItem);
     }
   };
   const [IdThatEdited, setIdThatEdited] = useState<Set<string>>(new Set());
   const setIdEdited = (value: string) => {
-    console.log(value);
     setIdThatEdited((prev) => new Set(prev).add(value));
   };
-  useEffect(() => {
-    console.log(IdThatEdited);
-  }, [IdThatEdited]);
   //tag+project 
   const [allTag] = useState<typeTag[]>(alltag);
   const [allProject] = useState<typeProject[]>(allproject);
@@ -201,13 +191,13 @@ const SwapperBoard: FC<SwapperProp> = ({
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
             transition={{ duration: 0.5, type: "spring" }}
-            className="w-[90%] xl:w-[47.5%] h-[95%] rounded-xl bg-white px-10"
+            className="w-[90%] xl:w-[47.5%] h-[95%] rounded-xl bg-[#ffffff] px-10"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="pt-7 pb-5 border-black/50 border-b-1 mb-10 flex justify-between">
               <h1 className="text-[32px] ">Swapboard</h1>
               <div
-                  className="item--add items-center justify-center rounded-[5px] relative flex flex-col bg-transparent w-30 bg border-4 border-[#4338ca] cursor-pointer select-none hover:bg-[#4338ca3d]"
+                  className="item--add items-center justify-center rounded-[5px] relative flex flex-col bg-transparent w-30 cursor-pointer select-none hover:bg-[#e9e9e9]"
                   onClick={handleAddandEdit}
                 >
                   +
@@ -232,7 +222,7 @@ const SwapperBoard: FC<SwapperProp> = ({
                 className="max-w-[800px] w-full flex flex-col gap-[10px] mx-auto"
                 ref={containerRef}
               >
-                <div className="grid gap-[10px] md:grid-cols-3 bg-fuchsia-200 grid-cols-1 ">
+                <div className="grid gap-[10px] md:grid-cols-3 grid-cols-1 ">
                   {slottedItems.map(({ slotId, itemId, item }) => (
                     <div
                       className="slot h-fit"
@@ -257,7 +247,7 @@ const SwapperBoard: FC<SwapperProp> = ({
                           />
                           <div className="py-1 flex justify-between mx-2">
                             <span>
-                              {item.project.project}+{slotId}+{item.id}{" "}
+                              {item.project.project}{" "}
                               position: {item.position}
                             </span>
                             <span className="flex items-center">

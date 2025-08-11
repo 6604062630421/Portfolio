@@ -39,11 +39,11 @@ type insCol = {
 };
 type blockEditor = {
   block: Block[];
-  onPrepare:(bl:Block[],editedId:Set<string>)=>void
+  onPrepare: (bl: Block[], editedId: Set<string>) => void;
 };
 let mouseBywindow: number;
 
-const BlockEditor: FC<blockEditor> = ({ block,onPrepare }) => {
+const BlockEditor: FC<blockEditor> = ({ block, onPrepare }) => {
   const [blocks, setBlocks] = useState<Block[]>(() =>
     updatePositions(
       block.length > 0
@@ -131,7 +131,6 @@ const BlockEditor: FC<blockEditor> = ({ block,onPrepare }) => {
     setActiveId(active.id as string);
   };
 
-
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     if (!over || active.id === over.id) return;
     setBlocks((prev) => {
@@ -139,6 +138,12 @@ const BlockEditor: FC<blockEditor> = ({ block,onPrepare }) => {
       const newIndex = prev.findIndex((b) => b.id === over.id);
       const newBlocks = arrayMove(prev, oldIndex, newIndex);
       return updatePositions(newBlocks);
+    });
+    setEditedBlock((prev) => {
+      const updated = new Set(prev);
+      updated.add(active.id as string);
+      updated.add(over.id as string);
+      return updated;
     });
     setActiveId(null);
   };
@@ -161,7 +166,6 @@ const BlockEditor: FC<blockEditor> = ({ block,onPrepare }) => {
     });
   };
 
-
   useEffect(() => {
     const handleClick = () => setContextMenu(null);
     window.addEventListener("click", handleClick);
@@ -169,8 +173,8 @@ const BlockEditor: FC<blockEditor> = ({ block,onPrepare }) => {
   }, []);
   useEffect(() => {
     console.log(blocks);
-    onPrepare(blocks,editedBlock)
-  }, [blocks,editedBlock.size]);
+    onPrepare(blocks, editedBlock);
+  }, [blocks, editedBlock.size]);
   useEffect(() => {
     const handlemousemove = (e: MouseEvent) => {
       mouseBywindow = 100 - (e.clientY / window.innerHeight) * 100;
@@ -179,9 +183,8 @@ const BlockEditor: FC<blockEditor> = ({ block,onPrepare }) => {
     return () => window.removeEventListener("mousemove", handlemousemove);
   }, []);
 
-
   return (
-    <div className="relative">
+    <div className="relative ">
       {isSelectColumn && (
         <div className="w-full h-full flex justify-center items-center z-10 fixed top-0 left-0">
           <div className="absolute z-50 w-[80%] h-[10%] bg-white shadow-2xl rounded-[3px] p-3 flex justify-between">
@@ -294,19 +297,19 @@ const BlockEditor: FC<blockEditor> = ({ block,onPrepare }) => {
           strategy={verticalListSortingStrategy}
         >
           {blocks.map((block) => (
-              <SortableItem
-                key={block.id}
-                block={block}
-                onChange={handleContentChange}
-                onRightClick={(e, id) => {
-                  e.preventDefault();
-                  setContextMenu({
-                    x: e.clientX,
-                    y: e.clientY,
-                    blockId: id,
-                  });
-                }}
-              />
+            <SortableItem
+              key={block.id}
+              block={block}
+              onChange={handleContentChange}
+              onRightClick={(e, id) => {
+                e.preventDefault();
+                setContextMenu({
+                  x: e.clientX,
+                  y: e.clientY,
+                  blockId: id,
+                });
+              }}
+            />
           ))}
         </SortableContext>
 
@@ -385,7 +388,8 @@ const BlockEditor: FC<blockEditor> = ({ block,onPrepare }) => {
                   newBlock = {
                     id: newId,
                     type: "img",
-                    content: "https://media.giphy.com/media/xT9IgG50Fb7Mi0prBC/giphy.gif",
+                    content:
+                      "https://media.giphy.com/media/xT9IgG50Fb7Mi0prBC/giphy.gif",
                     position: 0,
                   };
                   break;
